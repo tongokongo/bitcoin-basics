@@ -43,7 +43,7 @@ for i in range(len(b) // 11):
     wordlist.append(index_list[index])
 
 print(wordlist)
-
+#test wordlist in https://iancoleman.io/bip39/
 
 
 
