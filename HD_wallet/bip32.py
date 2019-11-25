@@ -6,13 +6,14 @@ import sys
 
 def b58encode(v):
     alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
-
+    print(binascii.hexlify(v))
     p, acc = 1, 0
     for c in reversed(v):
-        if sys.version < "3":
-            c = ord(c)
+        print("c: {}".format(c))
         acc += p * c
+        print("acc: {}".format(acc))
         p = p << 8
+        print("p: {}".format(p))
 
     string = ""
     while acc:
@@ -21,8 +22,8 @@ def b58encode(v):
     return string
 
 
-seed = binascii.unhexlify("17e4b5661796eeff8904550f8572289317ece7c1cc1316469f8f4c986c1ffd7b9f4c3aeac3e1713ffc21fa33707d09d57a2ece358d72111ef7c7658e7b33f2d5") #seed in bin
-#seed = binascii.unhexlify("000102030405060708090a0b0c0d0e0f")
+#seed = binascii.unhexlify("17e4b5661796eeff8904550f8572289317ece7c1cc1316469f8f4c986c1ffd7b9f4c3aeac3e1713ffc21fa33707d09d57a2ece358d72111ef7c7658e7b33f2d5") #seed in bin
+seed = binascii.unhexlify("000102030405060708090a0b0c0d0e0f")
 
 seed = hmac.new(b"Bitcoin seed", seed, digestmod=hashlib.sha512).digest() #compute HMAC-SHA512 of seed Key= "Bitcoin seed" Data = seed
 
