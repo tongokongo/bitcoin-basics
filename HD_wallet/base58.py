@@ -1,8 +1,4 @@
 import binascii
-import hmac
-import hashlib
-import sys
-
 
 def b58encode(v):
     alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
