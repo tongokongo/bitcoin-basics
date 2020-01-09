@@ -12,11 +12,11 @@ def b58encode(v):
         print("lev: {}".format(lev))
 
     string = ""
-    while number:
+    while number: #if number > 0...
         print("\n\n")
         number, modulo = divmod(number, 58)
+        string = alphabet[modulo] + string
         print("\n\n number: {} modulo: {} ".format(number, modulo))
-        string = alphabet[modulo : modulo + 1] + string
     return string
 
 
