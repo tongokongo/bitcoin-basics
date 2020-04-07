@@ -2,25 +2,7 @@ import binascii
 import hmac
 import hashlib
 import sys
-
-
-def b58encode(v):
-    alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
-    print(binascii.hexlify(v))
-    p, acc = 1, 0
-    for c in reversed(v):
-        print("c: {}".format(c))
-        acc += p * c
-        print("acc: {}".format(acc))
-        p = p << 8
-        print("p: {}".format(p))
-
-    string = ""
-    while acc:
-        acc, idx = divmod(acc, 58)
-        string = alphabet[idx : idx + 1] + string
-    return string
-
+from base58 import B58
 
 #seed = binascii.unhexlify("17e4b5661796eeff8904550f8572289317ece7c1cc1316469f8f4c986c1ffd7b9f4c3aeac3e1713ffc21fa33707d09d57a2ece358d72111ef7c7658e7b33f2d5") #seed in bin
 seed = binascii.unhexlify("000102030405060708090a0b0c0d0e0f")
@@ -47,4 +29,4 @@ xprv += hashed_xprv[:4]
 
 
 # Return base58
-print(b58encode(xprv))
+print(B58.b58encode(xprv))
