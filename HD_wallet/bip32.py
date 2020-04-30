@@ -6,7 +6,19 @@ from base58 import B58
 
 #seed = binascii.unhexlify("17e4b5661796eeff8904550f8572289317ece7c1cc1316469f8f4c986c1ffd7b9f4c3aeac3e1713ffc21fa33707d09d57a2ece358d72111ef7c7658e7b33f2d5") #seed in bin
 seed = binascii.unhexlify("000102030405060708090a0b0c0d0e0f")
+I = hmac.new("Bitcoin seed", seed, hashlib.sha512).digest()
+Il, Ir = I[:32], I[32:]
+key = {
+    "secret": Il, 
+    "chain": Ir,
+    "depth": 0,
+    "index": 0, 
+    "fpr": '\0\0\0\0'
+}
+k = ecdsa.SigningKey.from_string(key["secret"], curve=SECP256k1)
+K = k.get_verifying_key()
 
+'''
 seed = hmac.new(b"Bitcoin seed", seed, digestmod=hashlib.sha512).digest() #compute HMAC-SHA512 of seed Key= "Bitcoin seed" Data = seed
 
 # Serialization format can be found at: https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki#Serialization_format
@@ -30,3 +42,4 @@ xprv += hashed_xprv[:4]
 
 # Return base58
 print(B58.b58encode(xprv))
+'''
