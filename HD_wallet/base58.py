@@ -1,7 +1,7 @@
 import binascii
 
 
-class B58()
+class B58():
 
     def b58encode(self, v):
         alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
