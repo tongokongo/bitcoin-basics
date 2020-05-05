@@ -6,7 +6,6 @@ import os
 seed = binascii.unhexlify("000102030405060708090a0b0c0d0e0f")
 bip32_root_key_obj = bip32utils.BIP32Key.fromEntropy(seed)
 bip32_child_key_obj = bip32_root_key_obj.ChildKey(0 + bip32utils.BIP32_HARDEN)
-
     # return {
     #     'mnemonic_words': mnemonic_words,
     #     'bip32_root_key': bip32_root_key_obj.ExtendedKey(),

@@ -18,8 +18,18 @@ key = {
     "index": 0, 
     "fpr": '\0\0\0\0'
 }
-k = ecdsa.SigningKey.from_string(key["secret"], curve=SECP256k1)
-K = k.get_verifying_key()
+k_priv = ecdsa.SigningKey.from_string(key["secret"], curve=SECP256k1)
+K_priv = k_priv.get_verifying_key()
+k_pub = None
+K_pub = key["secret"]
+
+
+Extended_priv = '0488ade4'.decode('hex') # Version string for mainnet extended private keys
+Extended_pub  = '0488b21e'.decode('hex') # Version string for mainnet extended public keys
+depth = chr(key["depth"])
+fpr = key["fpr"]
+child = struct.pack('>L', key["index"])  # >L -> big endian
+
 
 '''
 seed = hmac.new(b"Bitcoin seed", seed, digestmod=hashlib.sha512).digest() #compute HMAC-SHA512 of seed Key= "Bitcoin seed" Data = seed
