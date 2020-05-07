@@ -8,10 +8,8 @@ from base58 import B58
 from ecdsa.curves import SECP256k1
 from ecdsa.ecdsa import int_to_string, string_to_int
 
-CURVE_GEN       = ecdsa.ecdsa.generator_secp256k1
-CURVE_ORDER     = CURVE_GEN.order()
-BIP32_HARDEN    = 0x80000000 # choose from hardened set of child keys
 
+#chain m
 #seed = binascii.unhexlify("17e4b5661796eeff8904550f8572289317ece7c1cc1316469f8f4c986c1ffd7b9f4c3aeac3e1713ffc21fa33707d09d57a2ece358d72111ef7c7658e7b33f2d5") #seed in bin
 seed = binascii.unhexlify("000102030405060708090a0b0c0d0e0f")
 I = hmac.new(b"Bitcoin seed", seed, hashlib.sha512).digest() #compute HMAC-SHA512 of seed Key= "Bitcoin seed" Data = seed
@@ -58,11 +56,3 @@ raw_pub += hashed_xpub[:4]
 # Return base58
 print(B58.b58encode(raw_priv))
 print(B58.b58encode(raw_pub))
-
-
-
-# chain m/0h
-i_str = struct.pack(">L", 0)
-data = data_pub + i_str
-I = hmac.new(key["chain"], data, hashlib.sha512).digest()
-Il, Ir = I[:32], I[32:]
