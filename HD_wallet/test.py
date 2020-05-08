@@ -3,9 +3,9 @@ import binascii
 import os
 
 
-seed = binascii.unhexlify("000102030405060708090a0b0c0d0e0f")
+seed = binascii.unhexlify("fffcf9f6f3f0edeae7e4e1dedbd8d5d2cfccc9c6c3c0bdbab7b4b1aeaba8a5a29f9c999693908d8a8784817e7b7875726f6c696663605d5a5754514e4b484542")
 bip32_root_key_obj = bip32utils.BIP32Key.fromEntropy(seed)
-bip32_child_key_obj = bip32_root_key_obj.ChildKey(0 + bip32utils.BIP32_HARDEN)
+bip32_child_key_obj = bip32_root_key_obj.ChildKey(0)
     # return {
     #     'mnemonic_words': mnemonic_words,
     #     'bip32_root_key': bip32_root_key_obj.ExtendedKey(),
