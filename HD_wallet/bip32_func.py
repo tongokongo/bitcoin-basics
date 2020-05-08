@@ -5,6 +5,8 @@ import ecdsa
 import sys
 import struct
 from base58 import B58
+
+from hashlib import sha256
 from ecdsa.curves import SECP256k1
 from ecdsa.ecdsa import int_to_string, string_to_int
 
@@ -37,11 +39,11 @@ def bip32_key(secret, chain, depth, index, fpr):
         data_pub= b'\3'+int_to_string(K_priv.pubkey.point.x())
     else:
         data_pub = b'\2'+int_to_string(K_priv.pubkey.point.x())
-
+    
     # print("Type \nExtended_priv: {} \ndepth: {} \nfpr: {} \nchild: {} \nchain: {} \ndata: {}"
     # .format(type(key["xprv"]), type(key["depth"]), type(key["fpr"]), type(child), type(key["chain"]), type(data_priv)))
-    raw_priv = key["xprv"] + key["depth"] + key["fpr"] + child + key["chain"] + data_priv
-    raw_pub = key["xpub"] + key["depth"] + key["fpr"] + child + key["chain"] + data_pub
+    raw_priv = key["xprv"] + depth + fpr + child + chain + data_priv
+    raw_pub = key["xpub"] + depth + fpr + child + chain + data_pub
 
     # Double hash using SHA256
     hashed_xprv = hashlib.sha256(raw_priv).digest()
@@ -56,17 +58,20 @@ def bip32_key(secret, chain, depth, index, fpr):
     # Return base58
     print(B58.b58encode(raw_priv))
     print(B58.b58encode(raw_pub))
-    return [data_pub, key["chain"], k_priv]
+    return [data_pub, chain, k_priv, K_priv]
 
 #seed = binascii.unhexlify("17e4b5661796eeff8904550f8572289317ece7c1cc1316469f8f4c986c1ffd7b9f4c3aeac3e1713ffc21fa33707d09d57a2ece358d72111ef7c7658e7b33f2d5") #seed in bin
 seed = binascii.unhexlify("fffcf9f6f3f0edeae7e4e1dedbd8d5d2cfccc9c6c3c0bdbab7b4b1aeaba8a5a29f9c999693908d8a8784817e7b7875726f6c696663605d5a5754514e4b484542")
+
+#chain m
 I = hmac.new(b"Bitcoin seed", seed, hashlib.sha512).digest() #compute HMAC-SHA512 of seed Key= "Bitcoin seed" Data = seed
 Il, Ir = I[:32], I[32:]  # Divide HMAC into "Left" and "Right" section of 32 bytes each :) 
-data_pub, chain, k_priv = bip32_key(Il, Ir, b"\x00", 0, b'\0\0\0\0')
+data_pub, chain, k_priv, K_priv = bip32_key(Il, Ir, b'\x00', 0, b'\0\0\0\0')
 
 # chain m/0
 ITERATE = 0 # because chain m/0
 i_str = struct.pack(">L", ITERATE)
+
 data = data_pub + i_str
 # data = b'\0' + k_priv.to_string() + i_str
 I = hmac.new(chain, data, hashlib.sha512).digest()
@@ -75,7 +80,18 @@ Il, Ir = I[:32], I[32:]
 Il_int = string_to_int(Il)
 pvt_int = string_to_int(k_priv.to_string())
 k_int = (Il_int + pvt_int) % CURVE_ORDER
-secret = int_to_string(k_int)
-depth = b"\x01" 
+secret = (b'\0'*32 + int_to_string(k_int))[-32:]
+depth = bytes([ITERATE + 1])
 
-new_data_pub, new_chain, new_k_priv = bip32_key(secret, Ir, depth, ITERATE, b'\0\0\0\0')
+#fingrprint:
+padx = (b'\0'*32 + int_to_string(K_priv.pubkey.point.x()))[-32:]
+if K_priv.pubkey.point.y() & 1:
+    ck = b'\3'+padx
+    print("yes")
+else:
+    print("else")
+    ck = b'\2'+padx
+fingerprint = hashlib.new('ripemd160', sha256(ck).digest()).digest()[:4]
+
+
+new_data_pub, new_chain, new_k_priv, new_K_priv = bip32_key(secret, Ir, depth, ITERATE, fingerprint)

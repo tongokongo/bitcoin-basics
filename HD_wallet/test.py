@@ -17,13 +17,14 @@ bip32_child_key_obj = bip32_root_key_obj.ChildKey(0)
 
 dict =  {
         'bip32_root_key': bip32_root_key_obj.ExtendedKey(),  # private=False
-        'bi32_root_key_public': binascii.hexlify(bip32_root_key_obj.PublicKey()).decode(),
+        # 'bi32_root_key_public': binascii.hexlify(bip32_root_key_obj.PublicKey()).decode(),
         'bip32_extended_private_key': bip32_child_key_obj.ExtendedKey(),
         # 'path': "m/44'/0'/0'/0",
-        'addr': bip32_child_key_obj.Address(),
-        'publickey': binascii.hexlify(bip32_child_key_obj.PublicKey()).decode(),
-        'privatekey': bip32_child_key_obj.WalletImportFormat(),
-        'coin': 'BTC'
+        # 'addr': bip32_child_key_obj.Address(),
+        # 'publickey': binascii.hexlify(bip32_child_key_obj.PublicKey()).decode(),
+        # 'privatekey': bip32_child_key_obj.WalletImportFormat(),
+        # 'coin': 'BTC'
     }
 
-print(dict)
+for k in dict:
+    print(k, dict[k])
