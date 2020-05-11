@@ -16,20 +16,18 @@ I = hmac.new(b"Bitcoin seed", seed, hashlib.sha512).digest() #compute HMAC-SHA51
 Il, Ir = I[:32], I[32:]  # Divide HMAC into "Left" and "Right" section of 32 bytes each :) 
 
 # Serialization format can be found at: https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki#Serialization_format
-key = {
-    "secret": Il, # left section of HMAC: source to generate keypair
-    "chain": Ir, # right section of HMAC: chain code
-    "depth": b"\x00", # Child depth; parent increments its own by one when assigning this
-    "index": 0,  # Child index
-    "fpr": b'\0\0\0\0', # Parent fingerprint,
-    "xprv":  binascii.unhexlify("0488ade4"), # Version string for mainnet extended private keys
-    "xpub": binascii.unhexlify("0488b21e") # Version string for mainnet extended public keys
-}
+secret = Il # left section of HMAC: source to generate keypair
+chain = Ir # right section of HMAC: chain code
+depth = b"\x00" # Child depth; parent increments its own by one when assigning this
+index = 0  # Child index
+fpr = b'\0\0\0\0' # Parent fingerprint,
+xprv = binascii.unhexlify("0488ade4") # Version string for mainnet extended private keys
+xpub = binascii.unhexlify("0488b21e") # Version string for mainnet extended public keys
 
-k_priv = ecdsa.SigningKey.from_string(key["secret"], curve=SECP256k1)
+k_priv = ecdsa.SigningKey.from_string(secret, curve=SECP256k1)
 K_priv = k_priv.get_verifying_key()
 
-child = struct.pack('>L', key["index"])  # >L -> big endian -> the way of storing values starting from most significant value in sequence
+child = struct.pack('>L', index)  # >L -> big endian -> the way of storing values starting from most significant value in sequence
 
 data_priv = b'\x00' + (k_priv.to_string())
 data_pub = None
@@ -38,10 +36,8 @@ if K_priv.pubkey.point.y() & 1:
 else:
     data_pub = b'\2'+int_to_string(K_priv.pubkey.point.x())
 
-# print("Type \nExtended_priv: {} \ndepth: {} \nfpr: {} \nchild: {} \nchain: {} \ndata: {}"
-# .format(type(Extended_priv), type(depth), type(fpr), type(child), type(chain), type(data_priv)))
-raw_priv = key["xprv"] + key["depth"] + key["fpr"] + child + key["chain"] + data_priv
-raw_pub = key["xpub"] + key["depth"] + key["fpr"] + child + key["chain"] + data_pub
+raw_priv = xprv + depth + fpr + child + chain + data_priv
+raw_pub = xpub + depth + fpr + child + chain + data_pub
 
 # Double hash using SHA256
 hashed_xprv = hashlib.sha256(raw_priv).digest()
