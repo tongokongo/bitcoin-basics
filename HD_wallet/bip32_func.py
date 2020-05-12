@@ -13,8 +13,6 @@ from ecdsa.ecdsa import int_to_string, string_to_int
 CURVE_GEN       = ecdsa.ecdsa.generator_secp256k1
 CURVE_ORDER     = CURVE_GEN.order()
 BIP32_HARDEN    = 0x80000000 # choose from hardened set of child keys
-bBIP32_HARDEN   = b'0x80000000'
-
 
 def bip32_key(secret, chain, depth, index, fpr):
     # Serialization format can be found at: https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki#Serialization_format
