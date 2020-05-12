@@ -18,32 +18,21 @@ bBIP32_HARDEN   = b'0x80000000'
 
 def bip32_key(secret, chain, depth, index, fpr):
     # Serialization format can be found at: https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki#Serialization_format
-    key = {
-        "secret": secret, # left section of HMAC: source to generate keypair
-        "chain": chain, # right section of HMAC: chain code
-        "depth": depth, # Child depth; parent increments its own by one when assigning this
-        "index": index,  # Child index
-        "fpr": fpr, # Parent fingerprint,
-        "xprv":  binascii.unhexlify("0488ade4"), # Version string for mainnet extended private keys
-        "xpub": binascii.unhexlify("0488b21e") # Version string for mainnet extended public keys
-    }
-
-    k_priv = ecdsa.SigningKey.from_string(key["secret"], curve=SECP256k1)
+    xprv = binascii.unhexlify("0488ade4") # Version string for mainnet extended private keys
+    xpub = binascii.unhexlify("0488b21e") # Version string for mainnet extended public keys
+    child = struct.pack('>L', index)  # >L -> big endian -> the way of storing values starting from most significant value in sequence
+    
+    k_priv = ecdsa.SigningKey.from_string(secret, curve=SECP256k1)
     K_priv = k_priv.get_verifying_key()
-
-    child = struct.pack('>L', key["index"])  # >L -> big endian -> the way of storing values starting from most significant value in sequence
-
+ 
     data_priv = b'\x00' + (k_priv.to_string())
-    data_pub = None
     if K_priv.pubkey.point.y() & 1:
         data_pub= b'\3'+int_to_string(K_priv.pubkey.point.x())
     else:
         data_pub = b'\2'+int_to_string(K_priv.pubkey.point.x())
     
-    # print("Type \nExtended_priv: {} \ndepth: {} \nfpr: {} \nchild: {} \nchain: {} \ndata: {}"
-    # .format(type(key["xprv"]), type(key["depth"]), type(key["fpr"]), type(child), type(key["chain"]), type(data_priv)))
-    raw_priv = key["xprv"] + depth + fpr + child + chain + data_priv
-    raw_pub = key["xpub"] + depth + fpr + child + chain + data_pub
+    raw_priv = xprv + depth + fpr + child + chain + data_priv
+    raw_pub = xpub + depth + fpr + child + chain + data_pub
 
     # Double hash using SHA256
     hashed_xprv = hashlib.sha256(raw_priv).digest()
