@@ -56,7 +56,7 @@ Il, Ir = I[:32], I[32:]  # Divide HMAC into "Left" and "Right" section of 32 byt
 data_pub, chain, k_priv, K_priv = bip32_key(Il, Ir, b'\x00', 0, b'\0\0\0\0')
 
 # chain m/0
-ITERATE = 0  + BIP32_HARDEN# because chain m/0
+ITERATE = 0  + BIP32_HARDEN  # because chain m/0
 i_str = struct.pack(">L", ITERATE)
 
 # for non-hardened derivation
