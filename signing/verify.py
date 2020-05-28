@@ -59,3 +59,10 @@ sig = base64.b64decode('G3SsgKMKAOiOaMzKSGqpKo5MFpt0biP9MbO5UkSl7VxRKcv6Uz+3mHsu
 
 vk = ecdsa.VerifyingKey.from_string(public_key, curve=ecdsa.SECP256k1)
 print(vk.verify(sig[1:], message, hashfunc=DoubleSha256))
+
+
+# https://github.com/bitcoin/bitcoin/blob/9af3c3c8249785a0106c14bce1cb72b3afc536e8/src/bitcoinrpc.cpp#L661
+# https://github.com/nanotube/supybot-bitcoin-marketmonitor/blob/master/GPG/local/bitcoinsig.py
+# https://github.com/nanotube/supybot-bitcoin-marketmonitor
+# https://bitcoin.stackexchange.com/questions/62446/signature-verification-in-python
+# https://bitcoin.stackexchange.com/questions/72657/signature-verification-in-python-using-compressed-public-key
