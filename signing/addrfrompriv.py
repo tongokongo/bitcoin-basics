@@ -2,6 +2,7 @@ import ecdsa
 import hashlib
 import base58
 
+# answer to https://bitcoin.stackexchange.com/questions/96190
 # WIF to private key by https://en.bitcoin.it/wiki/Wallet_import_format
 Private_key = base58.b58decode_check("5JYJWrRd7sbqEzL9KR9dYTGrxyLqZEhPtnCtcvhC5t8ZvWgS9iC") 
 Private_key = Private_key[1:]
