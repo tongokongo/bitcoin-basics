@@ -27,7 +27,9 @@ child = struct.pack('>L', index)  # >L -> big endian -> the way of storing value
 k_priv = ecdsa.SigningKey.from_string(secret, curve=SECP256k1)
 K_priv = k_priv.get_verifying_key()
 
-data_priv = b'\x00' + (k_priv.to_string())
+data_priv = b'\x00' + (k_priv.to_string())  # ser256(p): serializes integer p as a 32-byte sequence
+
+# serialization the coordinate pair P = (x,y) as a byte sequence using SEC1's compressed form
 if K_priv.pubkey.point.y() & 1:
     data_pub= b'\3'+int_to_string(K_priv.pubkey.point.x())
 else:
